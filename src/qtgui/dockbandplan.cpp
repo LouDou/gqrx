@@ -200,11 +200,11 @@ bool compareBandInfo(const BandInfo &a, const BandInfo &b)
 void DockBandplan::on_bandPlanChanged(bool state, const BandInfoFilter &filter)
 {
     QStringList visibleItems;
-    auto filteredBands = BandPlan::Get().getBandsInRange(filter, INT64_MIN, INT64_MAX);
-    std::sort(filteredBands.begin(), filteredBands.end(), compareBandInfo);
+    auto filteredUserBands = BandPlan::Get().getBandsInRange(BandPlan::PlanGroup::USER, filter, INT64_MIN, INT64_MAX);
+    std::sort(filteredUserBands.begin(), filteredUserBands.end(), compareBandInfo);
 
     QList<QList<QString>> bandData;
-    for (const auto &item : filteredBands) {
+    for (const auto &item : filteredUserBands) {
         QList<QString> itemInfo;
         itemInfo.push_back(QString("%0").arg(item.minFrequency));
         itemInfo.push_back(QString("%0").arg(item.maxFrequency));
@@ -217,9 +217,9 @@ void DockBandplan::on_bandPlanChanged(bool state, const BandInfoFilter &filter)
         ui->visibleItemList->removeRow(r);
     }
 
-    ui->visibleItemList->setRowCount(filteredBands.size());
+    ui->visibleItemList->setRowCount(filteredUserBands.size());
     ui->visibleItemList->setColumnCount(4);
-    for (auto r = 0; r < filteredBands.size(); r++){
+    for (auto r = 0; r < filteredUserBands.size(); r++){
         for (auto c = 0; c < 4; c++){
             ui->visibleItemList->setItem( r, c, new QTableWidgetItem(bandData[r][c]));
         }

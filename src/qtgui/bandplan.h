@@ -44,6 +44,8 @@ struct BandInfo
     QString country;
     QString use;
 
+    QString fullDescription;
+
     BandInfo()
     {
         this->minFrequency = 0;
@@ -79,14 +81,20 @@ class BandPlan : public QObject
 {
     Q_OBJECT
 public:
+    enum PlanGroup
+    {
+        USER,
+        OFCOM
+    };
+
     // This is a Singleton Class now because you can not send qt-signals from static functions.
     static void create();
     static BandPlan& Get();
     bool load();
     int size() { return m_BandInfoList.size(); }
-    BandInfo& getBand(int i) { return m_BandInfoList[i]; }
-    QList<BandInfo> getBandsInRange(const BandInfoFilter &filter, qint64 low, qint64 high);
-    QList<BandInfo> getBandsEncompassing(const BandInfoFilter &filter, qint64 freq);
+    BandInfo& getBand(const PlanGroup &group, int i) { return m_BandInfoList[group][i]; }
+    QList<BandInfo> getBandsInRange(const PlanGroup &group, const BandInfoFilter &filter, qint64 low, qint64 high);
+    QList<BandInfo> getBandsEncompassing(const PlanGroup &group, const BandInfoFilter &filter, qint64 freq);
 
     void setConfigDir(const QString&);
 
@@ -94,21 +102,22 @@ public:
     const BandInfoFilter getFilterValues() const { return m_filterValues; }
 
 public slots:
-    void on_BandPlanParseError();
+    void on_BandPlanParseError(QString filepath);
 
 private:
     BandPlan(); // Singleton Constructor is private.
 
-    QList<BandInfo>  m_BandInfoList;
-    QString          m_cfgPath;
-    QString          m_bandPlanFile;
+    QMap<PlanGroup, QList<BandInfo>>  m_BandInfoList;
+    QString          				  m_cfgPath;
+    QMap<PlanGroup, QString>          m_bandPlanFiles;
+
     static BandPlan* m_pThis;
 
     BandInfoFilter   m_filterValues;
 
 signals:
     void BandPlanChanged(void);
-    void BandPlanParseError();
+    void BandPlanParseError(QString filepath);
 };
 
 #endif // BANDPLAN_H

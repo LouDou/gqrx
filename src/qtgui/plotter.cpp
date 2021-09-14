@@ -269,14 +269,36 @@ void CPlotter::mouseMoveEvent(QMouseEvent* event)
                     qint64 hoverFrequency = freqFromX(pt.x());
                     QString toolTipText = QString("F: %1 kHz").arg(hoverFrequency/1.e3f, 0, 'f', 3);
                     QFontMetrics metrics(m_Font);
-                    int bandTopY = (m_OverlayPixmap.height() / m_DPR) - metrics.height() - 2 * VER_MARGIN - m_BandPlanHeight;
-                    QList<BandInfo> hoverBands = BandPlan::Get().getBandsEncompassing(m_BandPlanFilter, hoverFrequency);
-                    if(m_BandPlanEnabled && pt.y() > bandTopY && !hoverBands.empty())
+                    const auto pty = pt.y();
+
+                    const auto bandBaseY = (m_OverlayPixmap.height() / m_DPR) - metrics.height() - 2 * VER_MARGIN - m_BandPlanHeight;
+
+                    // USER
                     {
-                        toolTipText.append("\n");
-                        for (auto & hoverBand : hoverBands)
-                            toolTipText.append("\n" + hoverBand.name);
+                        const int bandTopY = bandBaseY - m_BandPlanHeight;
+                        const QList<BandInfo> hoverBands = BandPlan::Get().getBandsEncompassing(BandPlan::PlanGroup::USER, m_BandPlanFilter, hoverFrequency);
+                        if(m_BandPlanEnabled && pty > bandTopY && pty < bandTopY + m_BandPlanHeight && !hoverBands.empty())
+                        {
+                            toolTipText.append("\n");
+                            for (const auto &hoverBand : hoverBands){
+                                toolTipText.append("\n" + hoverBand.fullDescription);
+                            }
+                        }
                     }
+
+                    // OFCOM
+                    {
+                        const int bandTopY = bandBaseY;
+                        const QList<BandInfo> hoverBands = BandPlan::Get().getBandsEncompassing(BandPlan::PlanGroup::OFCOM, m_BandPlanFilter, hoverFrequency);
+                        if (m_BandPlanEnabled && pty > bandTopY && !hoverBands.empty())
+                        {
+                            toolTipText.append("\n");
+                            for (const auto &hoverBand : hoverBands) {
+                                toolTipText.append("\n" + hoverBand.fullDescription);
+                            }
+                        }
+                    }
+
                     QToolTip::showText(event->globalPos(), toolTipText, this);
                 }
             }
@@ -1349,25 +1371,50 @@ void CPlotter::drawOverlay()
 
     if (m_BandPlanEnabled)
     {
-        QList<BandInfo> bands = BandPlan::Get().getBandsInRange(m_BandPlanFilter,
-                                                                m_CenterFreq + m_FftCenter - m_Span / 2,
-                                                                m_CenterFreq + m_FftCenter + m_Span / 2);
-
-        for (auto & band : bands)
+        // USER
         {
-            int band_left = xFromFreq(band.minFrequency);
-            int band_right = xFromFreq(band.maxFrequency);
-            int band_width = band_right - band_left;
-            rect.setRect(band_left, xAxisTop - m_BandPlanHeight, band_width, m_BandPlanHeight);
-            painter.fillRect(rect, band.color);
-            QString band_label = band.name + " (" + band.modulation + ")";
-            int textWidth = metrics.boundingRect(band_label).width();
-            if (band_left < w && band_width > textWidth + 20)
+            const QList<BandInfo> bands = BandPlan::Get().getBandsInRange(
+                BandPlan::PlanGroup::USER,
+                m_BandPlanFilter,
+                m_CenterFreq + m_FftCenter - m_Span / 2,
+                m_CenterFreq + m_FftCenter + m_Span / 2
+            );
+
+            for (const auto &band : bands)
             {
-                painter.setOpacity(1.0);
-                rect.setRect(band_left, xAxisTop - m_BandPlanHeight, band_width, metrics.height());
-                painter.setPen(QColor(PLOTTER_TEXT_COLOR));
-                painter.drawText(rect, Qt::AlignCenter, band_label);
+                int band_left = xFromFreq(band.minFrequency);
+                int band_right = xFromFreq(band.maxFrequency);
+                int band_width = band_right - band_left;
+                rect.setRect(band_left, xAxisTop - m_BandPlanHeight - m_BandPlanHeight, band_width, m_BandPlanHeight);
+                painter.fillRect(rect, band.color);
+                QString band_label = band.name + " (" + band.modulation + ")";
+                int textWidth = metrics.boundingRect(band_label).width();
+                if (band_left < w && band_width > textWidth + 20)
+                {
+                    painter.setOpacity(1.0);
+                    rect.setRect(band_left, xAxisTop - m_BandPlanHeight - m_BandPlanHeight, band_width, metrics.height());
+                    painter.setPen(QColor(PLOTTER_TEXT_COLOR));
+                    painter.drawText(rect, Qt::AlignCenter, band_label);
+                }
+            }
+        }
+
+        // OFCOM
+        {
+            const QList<BandInfo> bands = BandPlan::Get().getBandsInRange(
+                BandPlan::PlanGroup::OFCOM,
+                m_BandPlanFilter,
+                m_CenterFreq + m_FftCenter - m_Span / 2,
+                m_CenterFreq + m_FftCenter + m_Span / 2
+            );
+
+            for (const auto &band : bands)
+            {
+                int band_left = xFromFreq(band.minFrequency);
+                int band_right = xFromFreq(band.maxFrequency);
+                int band_width = band_right - band_left;
+                rect.setRect(band_left, xAxisTop - m_BandPlanHeight, band_width, m_BandPlanHeight);
+                painter.fillRect(rect, band.color);
             }
         }
     }
