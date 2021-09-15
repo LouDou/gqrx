@@ -6,5 +6,6 @@
         <file>bandplan-v2.csv</file>
         <file>bandplan-v1.csv</file>
         <file>ofcom-spectrum-map.json</file>
+        <file>ofcom-colour-map.json</file>
     </qresource>
 </RCC>

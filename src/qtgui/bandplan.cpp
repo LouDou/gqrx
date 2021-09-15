@@ -54,22 +54,6 @@ static inline QString textFrequency(const qint64 &freq) {
     return QString("%0 kHz").arg(freq);
 }
 
-QMap<QString, QString> ofcomSectorColors({
-    {"Aeronautical", "#f89844"},
-    {"Amateur", "#ed147f"},
-    {"Broadcasting", "#63bc46"},
-    {"Business Radio", "#379ad4"},
-    {"Fixed Links", "#221f72"},
-    {"Licence exempt", "#f0c20c"},
-    {"Maritime", "#96d6d8"},
-    {"Mobile and Wireless Broadband", "#a7600c"},
-    {"Mobile and Wireless broadband", "#bb69aa"},
-    {"PMSE", "#525aa8"},
-    {"Public sector", "#ea5b5c"},
-    {"Satellite", "#e662a4"},
-    {"Space Science", "#5abf8f"},
-});
-
 BandPlan::BandPlan()
 {
     connect(this, SIGNAL(BandPlanParseError(QString)), this, SLOT(on_BandPlanParseError(QString)));
@@ -148,6 +132,7 @@ void BandPlan::setConfigDir(const QString& cfg_dir)
 
     m_bandPlanFiles[PlanGroup::OFCOM] = installFile(cfg_dir, "ofcom-spectrum-map.json", "ofcom-spectrum-map.json");
     qInfo() << "BandPlan: OFCOM File is " << m_bandPlanFiles[PlanGroup::OFCOM];
+    m_colourMapFile = installFile(cfg_dir, "ofcom-colour-map.json", "ofcom-colour-map.json");
 }
 
 void BandPlan::on_BandPlanParseError(QString filepath)
@@ -281,6 +266,21 @@ bool BandPlan::load()
 
     // Load OFCOM JSON
     {
+        QMap<QString, QString> ofcomSectorColors;
+        QFile mapfile(m_colourMapFile);
+        if (mapfile.open(QIODevice::ReadOnly | QIODevice::Text)) {
+            QJsonParseError error;
+            QByteArray filedata = mapfile.readAll();
+            QJsonObject doc = QJsonDocument::fromJson(filedata, &error).object();
+            if (error.error == QJsonParseError::NoError) {
+                const auto keys = doc.keys();
+                for (const auto &key : keys) {
+                    ofcomSectorColors[key] = doc[key].toString();
+                }
+            }
+            mapfile.close();
+        }
+
         QFile file(m_bandPlanFiles[PlanGroup::OFCOM]);
         if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
             QJsonParseError error;

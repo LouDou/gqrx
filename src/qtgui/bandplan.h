@@ -110,6 +110,7 @@ private:
     QMap<PlanGroup, QList<BandInfo>>  m_BandInfoList;
     QString          				  m_cfgPath;
     QMap<PlanGroup, QString>          m_bandPlanFiles;
+    QString                           m_colourMapFile;
 
     static BandPlan* m_pThis;
 
