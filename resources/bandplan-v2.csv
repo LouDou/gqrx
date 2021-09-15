@@ -155,58 +155,58 @@
 241000000000,250000000000,Narrow FM,10,#90009470,GHz USA Ham Band,2,USA,Amateur
 ,,,,,,,,
 # Radionavigation - Source: https://www.ntia.doc.gov/files/ntia/publications/2003-allochrt.pdf,,,,,,,,
-9000,14000,USB,10,#99AABD26,Radionavigation,Global,Global,Radionavigation
-90000,110000,USB,10,#99AABD26,Radionavigation,Global,Global,Radionavigation
-190000,200000,USB,10,#99C05017,Aeronautical Radionavigation,Global,Global,Radionavigation
-200000,275000,USB,10,#99C05017,Aeronautical Radionavigation,Global,Global,Radionavigation
-275000,285000,USB,10,#994C8E75,Maritime Radionavigation (Radio Beacons),Global,Global,Radionavigation
-275000,285000,USB,10,#99C05017,Aeronautical Radionavigation,Global,Global,Radionavigation
-285000,300000,USB,10,#99C05017,Aeronautical Radionavigation (Radio Beacons),Global,Global,Radionavigation
-285000,300000,USB,10,#994C8E75,Maritime Radionavigation (Radio Beacons),Global,Global,Radionavigation
-300000,325000,USB,10,#99C05017,Aeronautical Radionavigation (Radio Beacons),Global,Global,Radionavigation
-300000,325000,USB,10,#994C8E75,Maritime Radionavigation (Radio Beacons),Global,Global,Radionavigation
-325000,335000,USB,10,#99C05017,Aeronautical Radionavigation (Radio Beacons),Global,Global,Radionavigation
-325000,335000,USB,10,#994C8E75,Maritime Radionavigation (Radio Beacons),Global,Global,Radionavigation
-335000,405000,USB,10,#99C05017,Aeronautical Radionavigation (Radio Beacons),Global,Global,Radionavigation
-405000,415000,USB,10,#99AABD26,Radionavigation,Global,Global,Radionavigation
-415000,495000,USB,10,#99C05017,Aeronautical Radionavigation,Global,Global,Radionavigation
-510000,535000,USB,10,#99C05017,Aeronautical Radionavigation (Radio Beacons),Global,Global,Radionavigation
-74800000,75200000,USB,10,#99C05017,Aeronautical Radionavigation,Global,Global,Radionavigation
-328600000,335400000,USB,10,#99C05017,Aeronautical Radionavigation,Global,Global,Radionavigation
-399900000,400050000,USB,10,#99E9EB7C,Radionavigation Satellite,Global,Global,Radionavigation
-960000000,1215000000,USB,10,#99C05017,Aeronautical Radionavigation,Global,Global,Radionavigation
-1215000000,1240000000,USB,10,#99E9EB7C,Radionavigation Satellite,Global,Global,Radionavigation
-1300000000,1350000000,USB,10,#99C05017,Aeronautical Radionavigation,Global,Global,Radionavigation
-1559000000,1610000000,USB,10,#99E9EB7C,Radionavigation Satellite (Space to Earth),Global,Global,Radionavigation
-1559000000,1626500000,USB,10,#99C05017,Aeronautical Radionavigation,Global,Global,Radionavigation
-2700000000,2900000000,USB,10,#99C05017,Aeronautical Radionavigation,Global,Global,Radionavigation
-2900000000,3100000000,USB,10,#994C8E75,Maritime Radionavigation,Global,Global,Radionavigation
-3500000000,3650000000,USB,10,#99C05017,Aeronautical Radionavigation (Ground),Global,Global,Radionavigation
-4200000000,4400000000,USB,10,#99C05017,Aeronautical Radionavigation,Global,Global,Radionavigation
-5000000000,5250000000,USB,10,#99C05017,Aeronautical Radionavigation,Global,Global,Radionavigation
-5350000000,5460000000,USB,10,#99C05017,Aeronautical Radionavigation,Global,Global,Radionavigation
-5460000000,5470000000,USB,10,#99AABD26,Radionavigation,Global,Global,Radionavigation
-5470000000,5650000000,USB,10,#994C8E75,Maritime Radionavigation,Global,Global,Radionavigation
-9000000000,9200000000,USB,10,#99C05017,Aeronautical Radionavigation,Global,Global,Radionavigation
-9200000000,9300000000,USB,10,#994C8E75,Maritime Radionavigation,Global,Global,Radionavigation
-9300000000,9500000000,USB,10,#99AABD26,Radionavigation,Global,Global,Radionavigation
-13250000000,13400000000,USB,10,#99C05017,Aeronautical Radionavigation,Global,Global,Radionavigation
-14000000000,14200000000,USB,10,#99AABD26,Radionavigation,Global,Global,Radionavigation
-15400000000,15700000000,USB,10,#99C05017,Aeronautical Radionavigation,Global,Global,Radionavigation
-24450000000,24650000000,USB,10,#99AABD26,Radionavigation,Global,Global,Radionavigation
-24750000000,25050000000,USB,10,#99AABD26,Radionavigation,Global,Global,Radionavigation
-31800000000,33400000000,USB,10,#99AABD26,Radionavigation,Global,Global,Radionavigation
-45500000000,47000000000,USB,10,#99E9EB7C,Radionavigation Satellite,Global,Global,Radionavigation
-66000000000,71000000000,USB,10,#99AABD26,Radionavigation,Global,Global,Radionavigation
-66000000000,71000000000,USB,10,#99E9EB7C,Radionavigation Satellite,Global,Global,Radionavigation
-95000000000,100000000000,USB,10,#99AABD26,Radionavigation,Global,Global,Radionavigation
-95000000000,100000000000,USB,10,#99E9EB7C,Radionavigation Satellite,Global,Global,Radionavigation
-134000000000,142000000000,USB,10,#99E9EB7C,Radionavigation Satellite,Global,Global,Radionavigation
-134000000000,142000000000,USB,10,#99AABD26,Radionavigation,Global,Global,Radionavigation
-190000000000,200000000000,USB,10,#99E9EB7C,Radionavigation Satellite,Global,Global,Radionavigation
-190000000000,200000000000,USB,10,#99AABD26,Radionavigation,Global,Global,Radionavigation
-252000000000,265000000000,USB,10,#99E9EB7C,Radionavigation Satellite,Global,Global,Radionavigation
-252000000000,265000000000,USB,10,#99AABD26,Radionavigation,Global,Global,Radionavigation
+9000,14000,USB,10,#99AABD26,Radionavigation,2,USA,Radionavigation
+90000,110000,USB,10,#99AABD26,Radionavigation,2,USA,Radionavigation
+190000,200000,USB,10,#99C05017,Aeronautical Radionavigation,2,USA,Radionavigation
+200000,275000,USB,10,#99C05017,Aeronautical Radionavigation,2,USA,Radionavigation
+275000,285000,USB,10,#994C8E75,Maritime Radionavigation (Radio Beacons),2,USA,Radionavigation
+275000,285000,USB,10,#99C05017,Aeronautical Radionavigation,2,USA,Radionavigation
+285000,300000,USB,10,#99C05017,Aeronautical Radionavigation (Radio Beacons),2,USA,Radionavigation
+285000,300000,USB,10,#994C8E75,Maritime Radionavigation (Radio Beacons),2,USA,Radionavigation
+300000,325000,USB,10,#99C05017,Aeronautical Radionavigation (Radio Beacons),2,USA,Radionavigation
+300000,325000,USB,10,#994C8E75,Maritime Radionavigation (Radio Beacons),2,USA,Radionavigation
+325000,335000,USB,10,#99C05017,Aeronautical Radionavigation (Radio Beacons),2,USA,Radionavigation
+325000,335000,USB,10,#994C8E75,Maritime Radionavigation (Radio Beacons),2,USA,Radionavigation
+335000,405000,USB,10,#99C05017,Aeronautical Radionavigation (Radio Beacons),2,USA,Radionavigation
+405000,415000,USB,10,#99AABD26,Radionavigation,2,USA,Radionavigation
+415000,495000,USB,10,#99C05017,Aeronautical Radionavigation,2,USA,Radionavigation
+510000,535000,USB,10,#99C05017,Aeronautical Radionavigation (Radio Beacons),2,USA,Radionavigation
+74800000,75200000,USB,10,#99C05017,Aeronautical Radionavigation,2,USA,Radionavigation
+328600000,335400000,USB,10,#99C05017,Aeronautical Radionavigation,2,USA,Radionavigation
+399900000,400050000,USB,10,#99E9EB7C,Radionavigation Satellite,2,USA,Radionavigation
+960000000,1215000000,USB,10,#99C05017,Aeronautical Radionavigation,2,USA,Radionavigation
+1215000000,1240000000,USB,10,#99E9EB7C,Radionavigation Satellite,2,USA,Radionavigation
+1300000000,1350000000,USB,10,#99C05017,Aeronautical Radionavigation,2,USA,Radionavigation
+1559000000,1610000000,USB,10,#99E9EB7C,Radionavigation Satellite (Space to Earth),2,USA,Radionavigation
+1559000000,1626500000,USB,10,#99C05017,Aeronautical Radionavigation,2,USA,Radionavigation
+2700000000,2900000000,USB,10,#99C05017,Aeronautical Radionavigation,2,USA,Radionavigation
+2900000000,3100000000,USB,10,#994C8E75,Maritime Radionavigation,2,USA,Radionavigation
+3500000000,3650000000,USB,10,#99C05017,Aeronautical Radionavigation (Ground),2,USA,Radionavigation
+4200000000,4400000000,USB,10,#99C05017,Aeronautical Radionavigation,2,USA,Radionavigation
+5000000000,5250000000,USB,10,#99C05017,Aeronautical Radionavigation,2,USA,Radionavigation
+5350000000,5460000000,USB,10,#99C05017,Aeronautical Radionavigation,2,USA,Radionavigation
+5460000000,5470000000,USB,10,#99AABD26,Radionavigation,2,USA,Radionavigation
+5470000000,5650000000,USB,10,#994C8E75,Maritime Radionavigation,2,USA,Radionavigation
+9000000000,9200000000,USB,10,#99C05017,Aeronautical Radionavigation,2,USA,Radionavigation
+9200000000,9300000000,USB,10,#994C8E75,Maritime Radionavigation,2,USA,Radionavigation
+9300000000,9500000000,USB,10,#99AABD26,Radionavigation,2,USA,Radionavigation
+13250000000,13400000000,USB,10,#99C05017,Aeronautical Radionavigation,2,USA,Radionavigation
+14000000000,14200000000,USB,10,#99AABD26,Radionavigation,2,USA,Radionavigation
+15400000000,15700000000,USB,10,#99C05017,Aeronautical Radionavigation,2,USA,Radionavigation
+24450000000,24650000000,USB,10,#99AABD26,Radionavigation,2,USA,Radionavigation
+24750000000,25050000000,USB,10,#99AABD26,Radionavigation,2,USA,Radionavigation
+31800000000,33400000000,USB,10,#99AABD26,Radionavigation,2,USA,Radionavigation
+45500000000,47000000000,USB,10,#99E9EB7C,Radionavigation Satellite,2,USA,Radionavigation
+66000000000,71000000000,USB,10,#99AABD26,Radionavigation,2,USA,Radionavigation
+66000000000,71000000000,USB,10,#99E9EB7C,Radionavigation Satellite,2,USA,Radionavigation
+95000000000,100000000000,USB,10,#99AABD26,Radionavigation,2,USA,Radionavigation
+95000000000,100000000000,USB,10,#99E9EB7C,Radionavigation Satellite,2,USA,Radionavigation
+134000000000,142000000000,USB,10,#99E9EB7C,Radionavigation Satellite,2,USA,Radionavigation
+134000000000,142000000000,USB,10,#99AABD26,Radionavigation,2,USA,Radionavigation
+190000000000,200000000000,USB,10,#99E9EB7C,Radionavigation Satellite,2,USA,Radionavigation
+190000000000,200000000000,USB,10,#99AABD26,Radionavigation,2,USA,Radionavigation
+252000000000,265000000000,USB,10,#99E9EB7C,Radionavigation Satellite,2,USA,Radionavigation
+252000000000,265000000000,USB,10,#99AABD26,Radionavigation,2,USA,Radionavigation
 ,,,,,,,,
 # Broadcast,,,,,,,,
 54000000,72000000,AM,10,#902E98BB,Broadcast Television,Global,Global,Broadcast
