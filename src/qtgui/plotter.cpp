@@ -176,10 +176,98 @@ QSize CPlotter::sizeHint() const
     return {180, 180};
 }
 
+void CPlotter::calculateTooltip(const QPoint &pos, const QPoint &globalPos, const TooltipType type)
+{
+    if (!m_TooltipsEnabled) {
+        return;
+    }
+
+    if (type == TooltipType::NONE) {
+        QToolTip::hideText();
+    }
+
+    if (type == TooltipType::DEMOD) {
+        QToolTip::showText(
+            globalPos,
+            QString("Demod: %1 kHz")
+                .arg(m_DemodCenterFreq/1.e3f, 0, 'f', 3),
+            this
+        );
+    }
+
+    if (type == TooltipType::FILTER_HI) {
+        QToolTip::showText(
+            globalPos,
+            QString("High cut: %1 Hz")
+                .arg(m_DemodHiCutFreq),
+            this
+        );
+    }
+
+    if (type == TooltipType::FILTER_LO) {
+        QToolTip::showText(
+            globalPos,
+            QString("Low cut: %1 Hz")
+                .arg(m_DemodLowCutFreq),
+            this
+        );
+    }
+
+    if (type == TooltipType::FFT) {
+        qint64 hoverFrequency = freqFromX(pos.x());
+        QString toolTipText = QString("F: %1 kHz").arg(hoverFrequency/1.e3f, 0, 'f', 3);
+        QFontMetrics metrics(m_Font);
+        const auto pty = pos.y();
+
+        const auto bandBaseY = (m_OverlayPixmap.height() / m_DPR) - metrics.height() - 2 * VER_MARGIN - m_BandPlanHeight;
+
+        // USER
+        {
+            const int bandTopY = bandBaseY - m_BandPlanHeight;
+            const QList<BandInfo> hoverBands = BandPlan::Get().getBandsEncompassing("user", m_BandPlanFilter, hoverFrequency);
+            if(m_BandPlanEnabled && pty > bandTopY && pty < bandTopY + m_BandPlanHeight && !hoverBands.empty())
+            {
+                toolTipText.append("\n");
+                for (const auto &hoverBand : hoverBands){
+                    toolTipText.append("\n" + hoverBand.fullDescription);
+                }
+            }
+        }
+
+        // OFCOM
+        {
+            const int bandTopY = bandBaseY;
+            const QList<BandInfo> hoverBands = BandPlan::Get().getBandsEncompassing("ofcom", m_BandPlanFilter, hoverFrequency);
+            if (m_BandPlanEnabled && pty > bandTopY && !hoverBands.empty())
+            {
+                toolTipText.append("\n");
+                for (const auto &hoverBand : hoverBands) {
+                    toolTipText.append("\n" + hoverBand.fullDescription);
+                }
+            }
+        }
+
+        QToolTip::showText(globalPos, toolTipText, this);
+    }
+
+    if (type == TooltipType::WATERFALL) {
+        QDateTime tt;
+        tt.setMSecsSinceEpoch(msecFromY(pos.y()));
+
+        QToolTip::showText(
+            globalPos,
+            QString("%1\n%2 kHz")
+                .arg(tt.toString("yyyy.MM.dd hh:mm:ss.zzz"))
+                .arg(freqFromX(pos.x())/1.e3f, 0, 'f', 3),
+            this
+        );
+    }
+}
+
 void CPlotter::mouseMoveEvent(QMouseEvent* event)
 {
-
     QPoint pt = event->pos();
+    QPoint gpt = event->globalPos();
 
     /* mouse enter / mouse leave events */
     if (pt.y() < m_OverlayPixmap.height() / m_DPR)
@@ -210,16 +298,14 @@ void CPlotter::mouseMoveEvent(QMouseEvent* event)
                 if (YAXIS != m_CursorCaptured)
                     setCursor(QCursor(Qt::OpenHandCursor));
                 m_CursorCaptured = YAXIS;
-                if (m_TooltipsEnabled)
-                    QToolTip::hideText();
+                calculateTooltip(pt, gpt, TooltipType::NONE);
             }
             else if (isPointCloseTo(pt.y(), m_XAxisYCenter, m_CursorCaptureDelta+20))
             {
                 if (XAXIS != m_CursorCaptured)
                     setCursor(QCursor(Qt::OpenHandCursor));
                 m_CursorCaptured = XAXIS;
-                if (m_TooltipsEnabled)
-                    QToolTip::hideText();
+                calculateTooltip(pt, gpt, TooltipType::NONE);
             }
             else if (isPointCloseTo(pt.x(), m_DemodFreqX, m_CursorCaptureDelta))
             {
@@ -227,11 +313,7 @@ void CPlotter::mouseMoveEvent(QMouseEvent* event)
                 if (CENTER != m_CursorCaptured)
                     setCursor(QCursor(Qt::SizeHorCursor));
                 m_CursorCaptured = CENTER;
-                if (m_TooltipsEnabled)
-                    QToolTip::showText(event->globalPos(),
-                                       QString("Demod: %1 kHz")
-                                               .arg(m_DemodCenterFreq/1.e3f, 0, 'f', 3),
-                                       this);
+                calculateTooltip(pt, gpt, TooltipType::DEMOD);
             }
             else if (isPointCloseTo(pt.x(), m_DemodHiCutFreqX, m_CursorCaptureDelta))
             {
@@ -239,11 +321,7 @@ void CPlotter::mouseMoveEvent(QMouseEvent* event)
                 if (RIGHT != m_CursorCaptured)
                     setCursor(QCursor(Qt::SizeFDiagCursor));
                 m_CursorCaptured = RIGHT;
-                if (m_TooltipsEnabled)
-                    QToolTip::showText(event->globalPos(),
-                                       QString("High cut: %1 Hz")
-                                               .arg(m_DemodHiCutFreq),
-                                       this);
+                calculateTooltip(pt, gpt, TooltipType::FILTER_HI);
             }
             else if (isPointCloseTo(pt.x(), m_DemodLowCutFreqX, m_CursorCaptureDelta))
             {
@@ -251,11 +329,7 @@ void CPlotter::mouseMoveEvent(QMouseEvent* event)
                 if (LEFT != m_CursorCaptured)
                     setCursor(QCursor(Qt::SizeBDiagCursor));
                 m_CursorCaptured = LEFT;
-                if (m_TooltipsEnabled)
-                    QToolTip::showText(event->globalPos(),
-                                       QString("Low cut: %1 Hz")
-                                               .arg(m_DemodLowCutFreq),
-                                       this);
+                calculateTooltip(pt, gpt, TooltipType::FILTER_LO);
             }
             else
             {	//if not near any grab boundaries
@@ -264,43 +338,7 @@ void CPlotter::mouseMoveEvent(QMouseEvent* event)
                     setCursor(QCursor(Qt::ArrowCursor));
                     m_CursorCaptured = NOCAP;
                 }
-                if (m_TooltipsEnabled)
-                {
-                    qint64 hoverFrequency = freqFromX(pt.x());
-                    QString toolTipText = QString("F: %1 kHz").arg(hoverFrequency/1.e3f, 0, 'f', 3);
-                    QFontMetrics metrics(m_Font);
-                    const auto pty = pt.y();
-
-                    const auto bandBaseY = (m_OverlayPixmap.height() / m_DPR) - metrics.height() - 2 * VER_MARGIN - m_BandPlanHeight;
-
-                    // USER
-                    {
-                        const int bandTopY = bandBaseY - m_BandPlanHeight;
-                        const QList<BandInfo> hoverBands = BandPlan::Get().getBandsEncompassing(BandPlan::PlanGroup::USER, m_BandPlanFilter, hoverFrequency);
-                        if(m_BandPlanEnabled && pty > bandTopY && pty < bandTopY + m_BandPlanHeight && !hoverBands.empty())
-                        {
-                            toolTipText.append("\n");
-                            for (const auto &hoverBand : hoverBands){
-                                toolTipText.append("\n" + hoverBand.fullDescription);
-                            }
-                        }
-                    }
-
-                    // OFCOM
-                    {
-                        const int bandTopY = bandBaseY;
-                        const QList<BandInfo> hoverBands = BandPlan::Get().getBandsEncompassing(BandPlan::PlanGroup::OFCOM, m_BandPlanFilter, hoverFrequency);
-                        if (m_BandPlanEnabled && pty > bandTopY && !hoverBands.empty())
-                        {
-                            toolTipText.append("\n");
-                            for (const auto &hoverBand : hoverBands) {
-                                toolTipText.append("\n" + hoverBand.fullDescription);
-                            }
-                        }
-                    }
-
-                    QToolTip::showText(event->globalPos(), toolTipText, this);
-                }
+                calculateTooltip(pt, gpt, TooltipType::FFT);
             }
             m_GrabPosition = 0;
         }
@@ -316,17 +354,7 @@ void CPlotter::mouseMoveEvent(QMouseEvent* event)
             m_CursorCaptured = NOCAP;
             m_GrabPosition = 0;
         }
-        if (m_TooltipsEnabled)
-        {
-            QDateTime tt;
-            tt.setMSecsSinceEpoch(msecFromY(pt.y()));
-
-            QToolTip::showText(event->globalPos(),
-                               QString("%1\n%2 kHz")
-                                       .arg(tt.toString("yyyy.MM.dd hh:mm:ss.zzz"))
-                                       .arg(freqFromX(pt.x())/1.e3f, 0, 'f', 3),
-                               this);
-        }
+        calculateTooltip(pt, gpt, TooltipType::WATERFALL);
     }
     // process mouse moves while in cursor capture modes
     if (YAXIS == m_CursorCaptured)
@@ -1374,7 +1402,7 @@ void CPlotter::drawOverlay()
         // USER
         {
             const QList<BandInfo> bands = BandPlan::Get().getBandsInRange(
-                BandPlan::PlanGroup::USER,
+                "user",
                 m_BandPlanFilter,
                 m_CenterFreq + m_FftCenter - m_Span / 2,
                 m_CenterFreq + m_FftCenter + m_Span / 2
@@ -1402,7 +1430,7 @@ void CPlotter::drawOverlay()
         // OFCOM
         {
             const QList<BandInfo> bands = BandPlan::Get().getBandsInRange(
-                BandPlan::PlanGroup::OFCOM,
+                "ofcom",
                 m_BandPlanFilter,
                 m_CenterFreq + m_FftCenter - m_Span / 2,
                 m_CenterFreq + m_FftCenter + m_Span / 2

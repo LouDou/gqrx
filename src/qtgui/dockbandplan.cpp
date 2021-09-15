@@ -200,7 +200,7 @@ bool compareBandInfo(const BandInfo &a, const BandInfo &b)
 void DockBandplan::on_bandPlanChanged(bool state, const BandInfoFilter &filter)
 {
     QStringList visibleItems;
-    auto filteredUserBands = BandPlan::Get().getBandsInRange(BandPlan::PlanGroup::USER, filter, INT64_MIN, INT64_MAX);
+    auto filteredUserBands = BandPlan::Get().getBandsInRange("user", filter, INT64_MIN, INT64_MAX);
     std::sort(filteredUserBands.begin(), filteredUserBands.end(), compareBandInfo);
 
     QList<QList<QString>> bandData;

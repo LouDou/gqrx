@@ -199,6 +199,16 @@ private:
                                  qint32 *maxbin, qint32 *minbin) const;
     static void calcDivSize (qint64 low, qint64 high, int divswanted, qint64 &adjlow, qint64 &step, int& divs);
 
+    enum TooltipType {
+        NONE,
+        FFT,
+        DEMOD,
+        FILTER_HI,
+        FILTER_LO,
+        WATERFALL
+    };
+    void calculateTooltip(const QPoint &pos, const QPoint &globalPos, const TooltipType type);
+
     bool            m_PeakHoldActive;
     bool            m_PeakHoldValid;
     qint32          m_fftbuf[MAX_SCREENSIZE]{};

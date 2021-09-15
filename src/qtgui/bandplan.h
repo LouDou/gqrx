@@ -81,20 +81,15 @@ class BandPlan : public QObject
 {
     Q_OBJECT
 public:
-    enum PlanGroup
-    {
-        USER,
-        OFCOM
-    };
 
     // This is a Singleton Class now because you can not send qt-signals from static functions.
     static void create();
     static BandPlan& Get();
     bool load();
-    int size() { return m_BandInfoList.size(); }
-    BandInfo& getBand(const PlanGroup &group, int i) { return m_BandInfoList[group][i]; }
-    QList<BandInfo> getBandsInRange(const PlanGroup &group, const BandInfoFilter &filter, qint64 low, qint64 high);
-    QList<BandInfo> getBandsEncompassing(const PlanGroup &group, const BandInfoFilter &filter, qint64 freq);
+    QList<QString> groups() { return m_BandInfoLists.keys(); }
+    BandInfo& getBand(const QString &group, int i) { return m_BandInfoLists[group][i]; }
+    QList<BandInfo> getBandsInRange(const QString &group, const BandInfoFilter &filter, qint64 low, qint64 high);
+    QList<BandInfo> getBandsEncompassing(const QString &group, const BandInfoFilter &filter, qint64 freq);
 
     void setConfigDir(const QString&);
 
@@ -107,10 +102,9 @@ public slots:
 private:
     BandPlan(); // Singleton Constructor is private.
 
-    QMap<PlanGroup, QList<BandInfo>>  m_BandInfoList;
-    QString          				  m_cfgPath;
-    QMap<PlanGroup, QString>          m_bandPlanFiles;
-    QString                           m_colourMapFile;
+    QString          				m_cfgPath;
+    QMap<QString, QList<BandInfo>>  m_BandInfoLists;
+    QMap<QString, QString>          m_bandPlanFiles;
 
     static BandPlan* m_pThis;
 

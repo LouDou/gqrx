@@ -127,12 +127,12 @@ void BandPlan::setConfigDir(const QString& cfg_dir)
     m_cfgPath = cfg_dir;
 
     upgradeUserFile(cfg_dir, "bandplan-v1.csv", "bandplan.csv");
-    m_bandPlanFiles[PlanGroup::USER] = installFile(cfg_dir, "bandplan-v2.csv", "bandplan.csv");
-    qInfo() << "BandPlan: USER  File is " << m_bandPlanFiles[PlanGroup::USER];
+    m_bandPlanFiles["user"] = installFile(cfg_dir, "bandplan-v2.csv", "bandplan.csv");
+    qInfo() << "BandPlan: USER  File is " << m_bandPlanFiles["user"];
 
-    m_bandPlanFiles[PlanGroup::OFCOM] = installFile(cfg_dir, "ofcom-spectrum-map.json", "ofcom-spectrum-map.json");
-    qInfo() << "BandPlan: OFCOM File is " << m_bandPlanFiles[PlanGroup::OFCOM];
-    m_colourMapFile = installFile(cfg_dir, "ofcom-colour-map.json", "ofcom-colour-map.json");
+    m_bandPlanFiles["ofcom-data"] = installFile(cfg_dir, "ofcom-spectrum-map.json", "ofcom-spectrum-map.json");
+    qInfo() << "BandPlan: OFCOM File is " << m_bandPlanFiles["ofcom-data"];
+    m_bandPlanFiles["ofcom-map"] = installFile(cfg_dir, "ofcom-colour-map.json", "ofcom-colour-map.json");
 }
 
 void BandPlan::on_BandPlanParseError(QString filepath)
@@ -166,15 +166,15 @@ void BandPlan::on_BandPlanParseError(QString filepath)
 
 bool BandPlan::load()
 {
+    m_BandInfoLists.clear();
+
     // Load USER CSV
     {
         int goodlines = 0;
         int badlines = 0;
 
-        QFile file(m_bandPlanFiles[PlanGroup::USER]);
+        QFile file(m_bandPlanFiles["user"]);
         if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-            m_BandInfoList.clear();
-
             while (!file.atEnd())
             {
                 QString line = QString::fromUtf8(file.readLine().trimmed());
@@ -244,7 +244,7 @@ bool BandPlan::load()
                     .arg(textFrequency(info.minFrequency))
                     .arg(textFrequency(info.maxFrequency));
 
-                m_BandInfoList[PlanGroup::USER].append(info);
+                m_BandInfoLists["user"].append(info);
 
                 m_filterValues.countries.insert(info.country);
                 m_filterValues.modulations.insert(info.modulation);
@@ -255,19 +255,19 @@ bool BandPlan::load()
             }
             file.close();
         }
-        qInfo() << "BandPlan: Added" << m_BandInfoList[PlanGroup::USER].size() << "items from USER";
+        qInfo() << "BandPlan: Added" << m_BandInfoLists["user"].size() << "items from USER";
 
         if (badlines > goodlines || goodlines == 0)
         {
             qInfo() << "BandPlan: parse error; bad lines=" << badlines << " good lines=" << goodlines;
-            emit BandPlanParseError(m_bandPlanFiles[PlanGroup::USER]);
+            emit BandPlanParseError(m_bandPlanFiles["user"]);
         }
     }
 
     // Load OFCOM JSON
     {
         QMap<QString, QString> ofcomSectorColors;
-        QFile mapfile(m_colourMapFile);
+        QFile mapfile(m_bandPlanFiles["ofcom-map"]);
         if (mapfile.open(QIODevice::ReadOnly | QIODevice::Text)) {
             QJsonParseError error;
             QByteArray filedata = mapfile.readAll();
@@ -281,7 +281,7 @@ bool BandPlan::load()
             mapfile.close();
         }
 
-        QFile file(m_bandPlanFiles[PlanGroup::OFCOM]);
+        QFile file(m_bandPlanFiles["ofcom-data"]);
         if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
             QJsonParseError error;
             QByteArray filedata = file.readAll();
@@ -289,7 +289,7 @@ bool BandPlan::load()
             if (error.error == QJsonParseError::NoError) {
                 qInfo() << "BandPlan: Read OFCOM Json dated " << doc["date_updated"].toString();
 
-                m_BandInfoList[PlanGroup::OFCOM].clear();
+                m_BandInfoLists["ofcom"].clear();
                 const auto bands = doc["bands"].toArray();
                 for (const auto &bandItem : bands)
                 {
@@ -319,7 +319,7 @@ bool BandPlan::load()
                         .arg(textFrequency(info.minFrequency))
                         .arg(textFrequency(info.maxFrequency));
 
-                    m_BandInfoList[PlanGroup::OFCOM].append(info);
+                    m_BandInfoLists["ofcom"].append(info);
 
                     m_filterValues.countries.insert(info.country);
                     m_filterValues.modulations.insert(info.modulation);
@@ -333,7 +333,7 @@ bool BandPlan::load()
             }
             file.close();
         }
-        qInfo() << "BandPlan: Added" << m_BandInfoList[PlanGroup::OFCOM].size() << "items from OFCOM";
+        qInfo() << "BandPlan: Added" << m_BandInfoLists["ofcom"].size() << "items from OFCOM";
     }
 
     emit BandPlanChanged();
@@ -341,26 +341,38 @@ bool BandPlan::load()
     return true;
 }
 
-QList<BandInfo> BandPlan::getBandsInRange(const PlanGroup &group, const BandInfoFilter &filter, qint64 low, qint64 high)
+QList<BandInfo> BandPlan::getBandsInRange(const QString &group, const BandInfoFilter &filter, qint64 low, qint64 high)
 {
     QList<BandInfo> found;
-    for (int i = 0; i < m_BandInfoList[group].size(); i++) {
-        if (!filter.matches(m_BandInfoList[group][i])) continue;
-        if (m_BandInfoList[group][i].maxFrequency < low) continue;
-        if (m_BandInfoList[group][i].minFrequency > high) continue;
-        found.append(m_BandInfoList[group][i]);
+    if (!m_BandInfoLists.contains(group)) {
+        return found;
+    }
+
+    const auto bands = m_BandInfoLists[group];
+
+    for (int i = 0; i < bands.size(); i++) {
+        if (!filter.matches(bands[i])) continue;
+        if (bands[i].maxFrequency < low) continue;
+        if (bands[i].minFrequency > high) continue;
+        found.append(bands[i]);
     }
     return found;
 }
 
-QList<BandInfo> BandPlan::getBandsEncompassing(const PlanGroup &group, const BandInfoFilter &filter, qint64 freq)
+QList<BandInfo> BandPlan::getBandsEncompassing(const QString &group, const BandInfoFilter &filter, qint64 freq)
 {
     QList<BandInfo> found;
-    for (int i = 0; i < m_BandInfoList[group].size(); i++) {
-        if (!filter.matches(m_BandInfoList[group][i])) continue;
-        if (m_BandInfoList[group][i].maxFrequency < freq) continue;
-        if (m_BandInfoList[group][i].minFrequency > freq) continue;
-        found.append(m_BandInfoList[group][i]);
+    if (!m_BandInfoLists.contains(group)) {
+        return found;
+    }
+
+    const auto bands = m_BandInfoLists[group];
+
+    for (int i = 0; i < bands.size(); i++) {
+        if (!filter.matches(m_BandInfoLists[group][i])) continue;
+        if (bands[i].maxFrequency < freq) continue;
+        if (bands[i].minFrequency > freq) continue;
+        found.append(bands[i]);
     }
     return found;
 }
