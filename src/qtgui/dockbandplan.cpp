@@ -187,7 +187,7 @@ void DockBandplan::on_bandPlanUsesList_itemSelectionChanged()
 
 void DockBandplan::on_visibleItemList_itemDoubleClicked(QTableWidgetItem *item)
 {
-    const auto freq = ui->visibleItemList->item(item->row(), 0)->text();
+    const auto freq = ui->visibleItemList->item(item->row(), 0)->data(Qt::UserRole);
     auto demod = ui->visibleItemList->item(item->row(), 2)->text();
     emit bandPlanItemSelected(freq.toULongLong(), demod);
 }
@@ -206,10 +206,14 @@ void DockBandplan::on_bandPlanChanged(bool state, const BandInfoFilter &filter)
     QList<QList<QString>> bandData;
     for (const auto &item : filteredUserBands) {
         QList<QString> itemInfo;
-        itemInfo.push_back(QString("%0").arg(item.minFrequency));
-        itemInfo.push_back(QString("%0").arg(item.maxFrequency));
+        // Table cell data
+        itemInfo.push_back(item.tMinFreq);
+        itemInfo.push_back(item.tMaxFreq);
         itemInfo.push_back(item.modulation);
         itemInfo.push_back(item.name);
+
+        // Extra custom data used for interaction
+        itemInfo.push_back(QString("%0").arg(item.minFrequency));
         bandData.push_back(itemInfo);
     }
 
@@ -220,9 +224,12 @@ void DockBandplan::on_bandPlanChanged(bool state, const BandInfoFilter &filter)
     ui->visibleItemList->setRowCount(filteredUserBands.size());
     ui->visibleItemList->setColumnCount(4);
     for (auto r = 0; r < filteredUserBands.size(); r++){
-        for (auto c = 0; c < 4; c++){
-            ui->visibleItemList->setItem( r, c, new QTableWidgetItem(bandData[r][c]));
+        for (auto c = 0; c < 4; c++) {
+            // Cell data
+            auto *item = new QTableWidgetItem(bandData[r][c]);
+            // Extra data used for interaction
+            item->setData(Qt::UserRole, QVariant(bandData[r][4]));
+            ui->visibleItemList->setItem(r, c, item);
         }
     }
 }
-

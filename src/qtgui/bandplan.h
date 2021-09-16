@@ -44,6 +44,8 @@ struct BandInfo
     QString country;
     QString use;
 
+    QString tMinFreq;
+    QString tMaxFreq;
     QString shortDescription;
     QString fullDescription;
 

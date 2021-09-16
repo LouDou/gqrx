@@ -238,13 +238,17 @@ bool BandPlan::load()
                     continue;
                 }
 
-                info.shortDescription = QString("%0 (%1)").arg(info.name).arg(info.modulation);
+                info.shortDescription = QString("%0 (%1)")
+                    .arg(info.name)
+                    .arg(info.modulation);
 
+                info.tMinFreq = textFrequency(info.minFrequency);
+                info.tMaxFreq = textFrequency(info.maxFrequency);
                 info.fullDescription = QString("%0 : %1 (%2 - %3)")
                     .arg(info.use)
                     .arg(info.name)
-                    .arg(textFrequency(info.minFrequency))
-                    .arg(textFrequency(info.maxFrequency));
+                    .arg(info.tMinFreq)
+                    .arg(info.tMaxFreq);
 
                 m_BandInfoLists["user"].append(info);
 
@@ -317,11 +321,13 @@ bool BandPlan::load()
 
                     // no short description
 
+                    info.tMinFreq = textFrequency(info.minFrequency);
+                    info.tMaxFreq = textFrequency(info.maxFrequency);
                     info.fullDescription = QString("%0 : %1 (%2 - %3)")
                         .arg(info.use)
                         .arg(info.name)
-                        .arg(textFrequency(info.minFrequency))
-                        .arg(textFrequency(info.maxFrequency));
+                        .arg(info.tMinFreq)
+                        .arg(info.tMaxFreq);
 
                     m_BandInfoLists["ofcom"].append(info);
 
