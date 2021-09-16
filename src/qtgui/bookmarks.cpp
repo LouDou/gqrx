@@ -156,7 +156,7 @@ bool Bookmarks::save()
         QTextStream stream(&file);
 
         stream << QString("# Tag name").leftJustified(20) + "; " +
-                  QString(" color") << endl;
+                  QString(" color") << Qt::endl;
 
         QSet<TagInfo*> usedTags;
         for (int iBookmark = 0; iBookmark < m_BookmarkList.size(); iBookmark++)
@@ -172,16 +172,16 @@ bool Bookmarks::save()
         for (QSet<TagInfo*>::iterator i = usedTags.begin(); i != usedTags.end(); i++)
         {
             TagInfo& info = **i;
-            stream << info.name.leftJustified(20) + "; " + info.color.name() << endl;
+            stream << info.name.leftJustified(20) + "; " + info.color.name() << Qt::endl;
         }
 
-        stream << endl;
+        stream << Qt::endl;
 
         stream << QString("# Frequency").leftJustified(12) + "; " +
                   QString("Name").leftJustified(25)+ "; " +
                   QString("Modulation").leftJustified(20) + "; " +
                   QString("Bandwidth").rightJustified(10) + "; " +
-                  QString("Tags") << endl;
+                  QString("Tags") << Qt::endl;
 
         for (int i = 0; i < m_BookmarkList.size(); i++)
         {
@@ -200,7 +200,7 @@ bool Bookmarks::save()
                 line.append(tag.name);
             }
 
-            stream << line << endl;
+            stream << line << Qt::endl;
         }
 
         file.close();

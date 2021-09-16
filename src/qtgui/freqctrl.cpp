@@ -466,7 +466,7 @@ void CFreqCtrl::mousePressEvent(QMouseEvent *event)
 
 void CFreqCtrl::wheelEvent(QWheelEvent *event)
 {
-    QPoint    pt = event->pos();
+    QPoint    pt = event->position().toPoint();
     int       delta = m_InvertScrolling ? -event->angleDelta().y() : event->angleDelta().y();
     int       numDegrees = delta / 8;
     int       numSteps = numDegrees / 15;

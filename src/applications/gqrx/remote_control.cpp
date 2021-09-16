@@ -195,7 +195,7 @@ void RemoteControl::startRead()
     if (bytes_read < 2)  // command + '\n'
         return;
 
-    QStringList cmdlist = QString(buffer).trimmed().split(" ", QString::SkipEmptyParts);
+    QStringList cmdlist = QString(buffer).trimmed().split(" ", Qt::SkipEmptyParts);
 
     if (cmdlist.size() == 0)
         return;

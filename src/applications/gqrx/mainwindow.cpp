@@ -456,7 +456,7 @@ bool MainWindow::loadConfig(const QString& cfgfile, bool check_crash,
     {
         if (m_settings->value("crashed", false).toBool())
         {
-            qDebug() << "Crash guard triggered!" << endl;
+            qDebug() << "Crash guard triggered!";
             auto* askUserAboutConfig =
                     new QMessageBox(QMessageBox::Warning, tr("Crash Detected!"),
                                     tr("<p>Gqrx has detected problems with the current configuration. "
@@ -2383,7 +2383,7 @@ void MainWindow::on_actionAddBookmark_triggered()
         info.bandwidth = ui->plotter->getFilterBw();
         info.modulation = uiDockRxOpt->currentDemodAsString();
         info.name=name;
-        auto listTags = tags.split(",",QString::SkipEmptyParts);
+        auto listTags = tags.split(",", Qt::SkipEmptyParts);
         info.tags.clear();
         if (listTags.empty())
             info.tags.append(&Bookmarks::Get().findOrAddTag(""));
