@@ -238,6 +238,8 @@ bool BandPlan::load()
                     continue;
                 }
 
+                info.shortDescription = QString("%0 (%1)").arg(info.name).arg(info.modulation);
+
                 info.fullDescription = QString("%0 : %1 (%2 - %3)")
                     .arg(info.use)
                     .arg(info.name)
@@ -312,6 +314,8 @@ bool BandPlan::load()
                     info.region = "Global";
                     info.country = "Global";
                     info.modulation = "Mixed";
+
+                    // no short description
 
                     info.fullDescription = QString("%0 : %1 (%2 - %3)")
                         .arg(info.use)

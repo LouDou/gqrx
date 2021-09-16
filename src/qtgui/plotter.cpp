@@ -221,27 +221,14 @@ void CPlotter::calculateTooltip(const QPoint &pos, const QPoint &globalPos, cons
 
         const auto bandBaseY = (m_OverlayPixmap.height() / m_DPR) - metrics.height() - 2 * VER_MARGIN - m_BandPlanHeight;
 
-        // USER
-        {
-            const int bandTopY = bandBaseY - m_BandPlanHeight;
-            const QList<BandInfo> hoverBands = BandPlan::Get().getBandsEncompassing("user", m_BandPlanFilter, hoverFrequency);
+        const auto bpGroups = BandPlan::Get().groups();
+        for (int i = 0; i < bpGroups.size(); ++i) {
+            const int bandTopY = bandBaseY - (i * m_BandPlanHeight);
+            const QList<BandInfo> hoverBands = BandPlan::Get().getBandsEncompassing(bpGroups[i], m_BandPlanFilter, hoverFrequency);
             if(m_BandPlanEnabled && pty > bandTopY && pty < bandTopY + m_BandPlanHeight && !hoverBands.empty())
             {
                 toolTipText.append("\n");
                 for (const auto &hoverBand : hoverBands){
-                    toolTipText.append("\n" + hoverBand.fullDescription);
-                }
-            }
-        }
-
-        // OFCOM
-        {
-            const int bandTopY = bandBaseY;
-            const QList<BandInfo> hoverBands = BandPlan::Get().getBandsEncompassing("ofcom", m_BandPlanFilter, hoverFrequency);
-            if (m_BandPlanEnabled && pty > bandTopY && !hoverBands.empty())
-            {
-                toolTipText.append("\n");
-                for (const auto &hoverBand : hoverBands) {
                     toolTipText.append("\n" + hoverBand.fullDescription);
                 }
             }
@@ -1399,10 +1386,10 @@ void CPlotter::drawOverlay()
 
     if (m_BandPlanEnabled)
     {
-        // USER
-        {
+        const auto bpGroups = BandPlan::Get().groups();
+        for (int i = 0; i < bpGroups.size(); ++i) {
             const QList<BandInfo> bands = BandPlan::Get().getBandsInRange(
-                "user",
+                bpGroups[i],
                 m_BandPlanFilter,
                 m_CenterFreq + m_FftCenter - m_Span / 2,
                 m_CenterFreq + m_FftCenter + m_Span / 2
@@ -1413,36 +1400,19 @@ void CPlotter::drawOverlay()
                 int band_left = xFromFreq(band.minFrequency);
                 int band_right = xFromFreq(band.maxFrequency);
                 int band_width = band_right - band_left;
-                rect.setRect(band_left, xAxisTop - m_BandPlanHeight - m_BandPlanHeight, band_width, m_BandPlanHeight);
+                const auto y = xAxisTop - m_BandPlanHeight - (i * m_BandPlanHeight);
+                rect.setRect(band_left, y, band_width, m_BandPlanHeight);
                 painter.fillRect(rect, band.color);
-                QString band_label = band.name + " (" + band.modulation + ")";
-                int textWidth = metrics.boundingRect(band_label).width();
-                if (band_left < w && band_width > textWidth + 20)
-                {
-                    painter.setOpacity(1.0);
-                    rect.setRect(band_left, xAxisTop - m_BandPlanHeight - m_BandPlanHeight, band_width, metrics.height());
-                    painter.setPen(QColor(PLOTTER_TEXT_COLOR));
-                    painter.drawText(rect, Qt::AlignCenter, band_label);
+                if (band.shortDescription.length() > 0) {
+                    int textWidth = metrics.boundingRect(band.fullDescription).width();
+                    if (band_left < w && band_width > textWidth + 20)
+                    {
+                        painter.setOpacity(1.0);
+                        rect.setRect(band_left, y, band_width, metrics.height());
+                        painter.setPen(QColor(PLOTTER_TEXT_COLOR));
+                        painter.drawText(rect, Qt::AlignCenter, band.shortDescription);
+                    }
                 }
-            }
-        }
-
-        // OFCOM
-        {
-            const QList<BandInfo> bands = BandPlan::Get().getBandsInRange(
-                "ofcom",
-                m_BandPlanFilter,
-                m_CenterFreq + m_FftCenter - m_Span / 2,
-                m_CenterFreq + m_FftCenter + m_Span / 2
-            );
-
-            for (const auto &band : bands)
-            {
-                int band_left = xFromFreq(band.minFrequency);
-                int band_right = xFromFreq(band.maxFrequency);
-                int band_width = band_right - band_left;
-                rect.setRect(band_left, xAxisTop - m_BandPlanHeight, band_width, m_BandPlanHeight);
-                painter.fillRect(rect, band.color);
             }
         }
     }

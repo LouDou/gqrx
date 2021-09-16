@@ -44,6 +44,7 @@ struct BandInfo
     QString country;
     QString use;
 
+    QString shortDescription;
     QString fullDescription;
 
     BandInfo()
